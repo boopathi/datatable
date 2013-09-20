@@ -24,10 +24,11 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
   d := Quark{
-    ip: r.RemoteAddr,
-    value: getval(r.Form["data"]),
-    from: getval(r.Form["host"]),
-    time: time.Now(),
+    Ip: r.RemoteAddr,
+    Value: getval(r.Form["data"]),
+    From: getval(r.Form["host"]),
+    Class: getval(r.Form["class"]),
+    Ts: time.Now(),
   }
   db, err := couch.NewDatabase("localhost","5984", "datatable")
   if err != nil {
@@ -66,7 +67,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Error fetching Quark", err)
     return
   }
-  w.Write([]byte(q.value))
+  w.Write([]byte(q.Value))
 }
 
 func GetQuark(id string) (Quark, error) {
