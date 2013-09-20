@@ -8,5 +8,11 @@ type Quark struct {
   Value   string
   From    string
   Class   string
+  Type    string
   Ts      time.Time
+}
+
+type ViewTableData struct {
+  Title   string
+  Body    string
 }

@@ -6,5 +6,11 @@ import (
 )
 
 func ViewDataTable(w http.ResponseWriter, r *http.Request) {
-  fmt.Println("asdfasdf")
+  a := ViewTableData{}
+  page, err := getPage("datatable",a)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  w.Write(page)
 }
