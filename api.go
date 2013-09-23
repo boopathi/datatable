@@ -6,6 +6,61 @@ import (
   "time"
 )
 
+//
+// PUT handler - Hadrons
+//
+
+func CreateHandler(w http.ResponseWriter, r *http.Request) {
+  err := r.ParseForm()
+  if err != nil {
+    fmt.Println("Parsing error")
+    return
+  }
+  var class, cols string = getval(r.Form["class"]), getval(r.Form["cols"])
+  if class == "" || cols == "" {
+    fmt.Println("Ignoring creation")
+    w.Write([]byte("Invalid class or cols value \n"))
+    return
+  }
+  h := Hadron{
+    Class: class,
+    Cols: cols,
+  }
+  err = CreateTable(&h)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  w.Write([]byte("Table Desc Id = " + h.Id.String() + "\n"))
+}
+
+//
+// GET handler - Hadron
+//
+
+func GetColsHandler(w http.ResponseWriter, r *http.Request) {
+  err := r.ParseForm()
+  if err != nil {
+    fmt.Println("Parsing Error")
+    return
+  }
+  var class string = getval(r.Form["class"])
+  if class == "" {
+    fmt.Println("Invalid request")
+    w.Write([]byte("Invalid class variable\n"))
+  }
+  h, err := GetTableDesc(class)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  w.Write([]byte(h.Cols))
+}
+
+//
+// PUT handler - Quark
+//
+
 func PutHandler(w http.ResponseWriter, r *http.Request) {
   err := r.ParseForm()
   if err != nil {
@@ -27,10 +82,16 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
   err = PutQuark(&q)
   if err != nil {
     fmt.Println(err)
+    return
   }
 
   w.Write([]byte("Insert Id = " + q.Id.String() + "\n"))
 }
+
+//
+// GET handler - Quark
+//
+
 func GetHandler(w http.ResponseWriter, r *http.Request) {
   err := r.ParseForm()
   if err != nil {

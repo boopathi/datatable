@@ -1,14 +1,36 @@
 <!doctype html>
 <html>
   <head>
-    <title>DataTable</title>
-    <link rel="stylesheet" type="text/css" href="/datatable.css" />
+    <title>List of Datatables</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/DT_bootstrap.css" />
   </head>
   <body>
-    <h1>Datatable</h1>
-    <p>asdlkfjasdf</p>
-    <script src="/jquery.min.js"></script>
-    <script src="/datatable.min.js"></script>
-    <script src="/script.js"></script>
+    <div class="container">
+      <table class="table table-striped" id="datatable">
+        <thead>
+          <tr>
+            {{range $i, $e := .Headers}}
+            <th>{{.}}</th>
+            {{end}}
+          </tr>
+        </thead>
+        <tbody>
+          {{range $i, $e := .Body}}
+          <tr>
+            {{range $j, $f := .}}
+            <td>{{.}}</td>
+            {{end}}
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.dataTables.min.js"></script>
+    <script src="/js/DT_bootstrap.js"></script>
+    <script src="/js/listview.js"></script>
   </body>
 </html>

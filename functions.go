@@ -46,7 +46,41 @@ func GetCollections() ([]string, error) {
   defer session.Close()
   db := session.DB("datatable")
   c, err := db.CollectionNames()
-  return c,err
+  var r []string
+  for _, v := range c {
+    if len(v)>3 && v[0:2] == "__" && v[len(v)-2:] == "__" { continue }
+    r = append(r,v)
+  }
+  return r,err
+}
+
+//
+// Getters and Setters - Hadrons
+//
+
+func CreateTable(h *Hadron) error{
+  session, err := mgo.Dial("localhost")
+  if err != nil { return err }
+  defer session.Close()
+  h.Id = bson.NewObjectId()
+  c := session.DB("datatable").C("__colstable__")
+  _, err = c.Upsert(bson.M{"class": h.Class}, &h)
+  if err != nil { return err }
+  return nil
+}
+
+func GetTableDesc(class string) (Hadron, error) {
+  session, err := mgo.Dial("localhost")
+  if err != nil { return Hadron{}, err }
+  defer session.Close()
+  c := session.DB("datatable").C("__colstable__")
+  var results []Hadron
+  err = c.Find(bson.M{"class": class}).All(&results)
+  if err != nil { return Hadron{}, err }
+  if len(results) < 1 {
+    return Hadron{}, errors.New("GetTableDesc: Fetched None")
+  }
+  return results[0], nil
 }
 
 //

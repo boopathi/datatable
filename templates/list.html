@@ -20,12 +20,19 @@
         <tbody>
           {{range $i, $e := .Views}}
           <tr><td>{{$i}}</td><td><a href="/view/{{.}}" >{{$e}}</a></td><td>
-              <a href="" class="btn btn-success">View</a> <a href="" class="btn btn-warning">Edit</a> <a href="" class="btn btn-danger">Delete</a>
+              <a href="/view/{{$e}}" class="btn btn-success">View</a> 
+              <a href="/view/{{$e}}" class="btn btn-warning">Edit</a> 
+              <a href="/view/{{$e}}" class="btn btn-danger">Delete</a>
             </td>
           </tr>
           {{end}}
         </tbody>
       </table>
+    </div>
+    <div class="well">
+      <div class="hero-unit">
+        <h4>Source: <a href="https://github.com/boopathi/datatable" target="_blank">Github->boopathi->datatable</a><h4>
+      </div>
     </div>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>

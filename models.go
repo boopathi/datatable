@@ -13,6 +13,13 @@ type Quark struct {
   Ts          time.Time         `bson: "ts"`
 }
 
+// Table Description
+type Hadron struct {
+  Id          bson.ObjectId     `bson: "_id,omitempty"`
+  Class       string            `bson: "class"`
+  Cols        string            `bson: "cols"`
+}
+
 type Conf struct {
   Port        int
   DBHost      string

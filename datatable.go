@@ -18,6 +18,8 @@ func main() {
   r.HandleFunc("/view/{view}", ViewHandler)
 
   a := r.PathPrefix("/api").Subrouter()
+  a.HandleFunc("/create", CreateHandler).Methods("POST", "PUT")
+  a.HandleFunc("/cols", GetColsHandler)
   a.HandleFunc("/put", PutHandler).Methods("POST","PUT")
   a.HandleFunc("/get", GetHandler)
 
