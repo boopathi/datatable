@@ -6,11 +6,17 @@ import (
   "time"
 )
 
+func setHeader(w *http.ResponseWriter) {
+  (*w).Header().Set("Content-Type", "text/plain")
+  (*w).Header().Set("X-Powered-By", "datatable.go")
+}
+
 //
 // PUT handler - Hadrons
 //
 
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
+  setHeader(&w)
   err := r.ParseForm()
   if err != nil {
     fmt.Println("Parsing error")
@@ -39,6 +45,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 //
 
 func GetColsHandler(w http.ResponseWriter, r *http.Request) {
+  setHeader(&w)
   err := r.ParseForm()
   if err != nil {
     fmt.Println("Parsing Error")
@@ -62,6 +69,7 @@ func GetColsHandler(w http.ResponseWriter, r *http.Request) {
 //
 
 func PutHandler(w http.ResponseWriter, r *http.Request) {
+  setHeader(&w)
   err := r.ParseForm()
   if err != nil {
     fmt.Println("Parsing Error")
@@ -93,6 +101,7 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
 //
 
 func GetHandler(w http.ResponseWriter, r *http.Request) {
+  setHeader(&w)
   err := r.ParseForm()
   if err != nil {
     fmt.Println("Error Parsing form", err)
