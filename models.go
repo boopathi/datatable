@@ -36,7 +36,3 @@ type Conf struct {
   TmplDir     string            `json: "templates_dir"`
 }
 
-type ViewTableData struct {
-  Title       string
-  Body        string
-}
