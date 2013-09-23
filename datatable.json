@@ -1,19 +1,16 @@
 {
-  // Port on which the HTTP server runs
+  "_helptext1": "Port on which the HTTP server runs",
   "port": 4200,
 
-  //Mongo DB - Hostname
+  "_helptext2": "Mongo DB - Hostname",
   "db_host": "localhost",
 
-  //Mongo DB - database name
+  "_helptext3": "Mongo DB - database name",
   "db_name": "datatable",
 
-  //Static Contents Directory
-  //Relative or absolute path
-  //Recommended that it should NOT contain a trailing slash(/)
+  "_helptext4": "Static Contents Directory. Relative or absolute path. Recommended that it should NOT contain a trailing slash(/)"
   "static_dir": "./static",
 
-  //Templates Directory
-  //Same Rules as static_dir
+  "_helptext5": "Templates Directory. Same Rules as static_dir"
   "templates_dir": "./templates",
 }
