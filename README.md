@@ -11,7 +11,8 @@ MIT
 
 + `go get github.com/boopathi/datatable`
 + `go install`
-+ `$GOPATH/bin/datatable -config datatable.json`
++ Install `mongodb` and configure `datatable.json`
++ `$GOPATH/bin/datatable -config /path/to/datatable.json`
 
 ## Configuration
 
