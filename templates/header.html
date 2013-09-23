@@ -11,3 +11,7 @@
       <table class="table table-striped" id="datatable">
         <thead>
           <tr>
+            {{range $i, $e := .}}<th>{{$e}}</th>{{end}}
+          </tr>
+        </thead>
+        <tbody>

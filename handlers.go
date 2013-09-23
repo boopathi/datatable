@@ -2,8 +2,6 @@ package main
 
 import (
   "fmt"
-  "bytes"
-  "html/template"
   "net/http"
   "github.com/gorilla/mux"
   "labix.org/v2/mgo/bson"
@@ -11,6 +9,9 @@ import (
 )
 
 func ListViews(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "text/html")
+  w.Header().Set("X-Powered-By", "datatable.go")
+
   C, err := GetCollections()
   if err != nil {
     fmt.Println("Cannot Fetch Collections: ", err)
@@ -20,16 +21,6 @@ func ListViews(w http.ResponseWriter, r *http.Request) {
     "Views": C,
   })
   w.Write(page)
-}
-
-func DT_GetHeaders(class string, h chan<- []string, e chan<- error) {
-  ha, err := GetTableDesc(class)
-  if err != nil {
-    e<- err
-    return
-  }
-  Headers := strings.Split(ha.Cols, ",")
-  h<- Headers
 }
 
 func ParseQuark(q Quark, b chan<- [][]string) {
@@ -51,15 +42,21 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  //Set HTTP headers
+  w.Header().Set("Content-Type", "text/html")
+  w.Header().Set("X-Powered-By", "datatable.go")
+
+  //Get Header
+  h, err := GetTableDesc(class)
+  if err != nil { fmt.Println(err); return }
+  Headers := strings.Split(h.Cols, ",")
+
   //Throw Page initial content first
-  page,err := getPage("header", nil)
+  page,err := getPage("header", Headers)
   if err != nil { fmt.Println(err); return }
   w.Write(page)
 
-  head := make(chan []string)
-  ehead := make(chan error)
-  go DT_GetHeaders(class,head,ehead)
-
+  //Make the body
   c := DB.Db.C(class)
   var q Quark
   body := make(chan [][]string)
@@ -70,32 +67,12 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
     go ParseQuark(q, body)
   }
 
-  var buf bytes.Buffer
-  //wait to throw head
-  select {
-  case Headers := <-head :
-    t, err := template.ParseFiles(Config.TmplDir + "/dt_header.html")
-    if err != nil { fmt.Println(err); return}
-    t.Execute(&buf, Headers)
-    w.Write(buf.Bytes())
-
-  case err = <-ehead:
-    fmt.Println(err)
-    return
-  }
-
-  //Now the middle portion
-  page, err = getPage("middle", nil)
-  if err != nil { fmt.Println(err); return }
-  w.Write(page)
-
   //Now Throw Body
   for i:=0;i<count;i++ {
     Body := <-body
-    t, err := template.ParseFiles(Config.TmplDir + "/dt_body.html")
+    page, err = getPage("dt_body", Body)
     if err != nil { fmt.Println(err); return }
-    t.Execute(&buf, Body)
-    w.Write(buf.Bytes())
+    w.Write(page)
   }
 
   page,err = getPage("footer", nil)
@@ -103,6 +80,10 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
   w.Write(page)
 
 }
+
+//
+// Deprecated 
+//
 
 func ViewHandler_Old(w http.ResponseWriter, r *http.Request) {
   vars := mux.Vars(r)
