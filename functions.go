@@ -8,7 +8,17 @@ import (
   "fmt"
 )
 
-func GetQuark(id string) (Quark, error) {
+func getval(a []string, d ...string) string {
+  if len(a) > 0 {
+    return a[0]
+  }
+  if len(d) > 0 {
+    return d[0]
+  }
+  return ""
+}
+
+func GetQuarkById(id string) (Quark, error) {
   db,err := couch.NewDatabase("localhost", "5984", "datatable")
   if err != nil {
     fmt.Println("Error Connecting to DB")
@@ -21,6 +31,14 @@ func GetQuark(id string) (Quark, error) {
     return Quark{}, err
   }
   return data, nil
+}
+
+func GetQuarksByClass(class string) ([]Quark, error) {
+  db, err := couch.NewDatabase("localhost", "5984", "datatable")
+  if err != nil {
+    fmt.Println("Error Connecting to DB")
+    return nil, err
+  }
 }
 
 func parseTemplate(file string, data interface{}) ([]byte, error) {

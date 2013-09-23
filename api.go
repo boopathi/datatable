@@ -6,15 +6,6 @@ import (
   "code.google.com/p/couch-go"
   "time"
 )
-func getval(a []string, d ...string) string {
-  if len(a) > 0 {
-    return a[0]
-  }
-  if len(d) > 0 {
-    return d[0]
-  }
-  return ""
-}
 
 func PutHandler(w http.ResponseWriter, r *http.Request) {
   err := r.ParseForm()
@@ -22,7 +13,7 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Parsing Error")
     return
   }
-  var key string = getval(r.Form["host"])
+  var key string = "_design/" + getval(r.Form["host"])
   if key == "" {
     fmt.Println("Ignoring datapoint")
     return
@@ -33,6 +24,7 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
     From: getval(r.Form["host"]),
     Class: getval(r.Form["class"]),
     Ts: time.Now(),
+    ClassView: "function(doc) { if(doc['Class'] == '') }"
   }
   db, err := couch.NewDatabase("localhost","5984", "datatable")
   if err != nil {
@@ -66,7 +58,7 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
     return
   }
   var id string = getval(r.Form["host"])
-  q, err := GetQuark(id)
+  q, err := GetQuarkById(id)
   if err != nil {
     fmt.Println("Error fetching Quark", err)
     return
