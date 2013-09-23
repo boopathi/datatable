@@ -29,7 +29,7 @@ deb:
 
 rpm:
 	go build
-	fpm -s dir -t deb -n ${NAME} -v ${VER} \
+	fpm -s dir -t rpm -n ${NAME} -v ${VER} \
 		--prefix ${PREFIX} \
 		--license ${LICENSE} \
 		--provides datatable \
