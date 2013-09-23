@@ -1,16 +1,16 @@
 package main
 
 import "time"
+import "labix.org/v2/mgo/bson"
 
 // Data from 1 Node
 type Quark struct {
-  Ip          string
-  Value       string
-  From        string
-  Class       string
-  Type        string
-  Ts          time.Time
-  ClassView   string         `json: "_view/class"`
+  Id          bson.ObjectId     `bson: "_id,omitempty"`
+  Ip          string            `bson: "ip"`
+  Value       string            `bson: "value"`
+  From        string            `bson: "from"`
+  Class       string            `bson: "class"`
+  Ts          time.Time         `bson: "ts"`
 }
 
 type Conf struct {

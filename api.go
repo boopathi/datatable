@@ -3,7 +3,6 @@ package main
 import (
   "net/http"
   "fmt"
-  "code.google.com/p/couch-go"
   "time"
 )
 
@@ -13,43 +12,24 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Parsing Error")
     return
   }
-  var key string = "_design/" + getval(r.Form["host"])
-  if key == "" {
+  var key,class string = getval(r.Form["host"]), getval(r.Form["class"])
+  if key == "" || class == "" {
     fmt.Println("Ignoring datapoint")
     return
   }
-  d := Quark{
+  q := Quark{
     Ip: r.RemoteAddr,
     Value: getval(r.Form["data"]),
-    From: getval(r.Form["host"]),
-    Class: getval(r.Form["class"]),
+    From: key,
+    Class: class,
     Ts: time.Now(),
-    ClassView: "function(doc) { if(doc['Class'] == '') }"
   }
-  db, err := couch.NewDatabase("localhost","5984", "datatable")
+  err = PutQuark(&q)
   if err != nil {
-    fmt.Println("Error connecting to DB", err)
-    return
+    fmt.Println(err)
   }
-  tmp := Quark{}
-  var id string
-  rev, err := db.Retrieve(key,&tmp)
-  if err != nil {
-    //retrieve failed - so safely insert
-    id, rev, err = db.InsertWith(d, key)
-    if err != nil {
-      fmt.Println("Error inserting", err)
-      return
-    }
-  } else {
-    //Retrive and Edit
-    id = key
-    _, err := db.EditWith(&d, id, rev)
-    if err != nil {
-      fmt.Println("Error inserting", err)
-    }
-  }
-  w.Write([]byte("Id = " + id + "\nRev = " + rev + "\n"))
+
+  w.Write([]byte("Insert Id = " + q.Id.String() + "\n"))
 }
 func GetHandler(w http.ResponseWriter, r *http.Request) {
   err := r.ParseForm()
@@ -57,8 +37,12 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Println("Error Parsing form", err)
     return
   }
-  var id string = getval(r.Form["host"])
-  q, err := GetQuarkById(id)
+  var key,class string = getval(r.Form["host"]), getval(r.Form["class"])
+  if key == "" || class == "" {
+    w.Write([]byte("Invalid Request"))
+    return
+  }
+  q, err := GetQuarkByHost(key,class)
   if err != nil {
     fmt.Println("Error fetching Quark", err)
     return
