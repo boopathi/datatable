@@ -6,7 +6,6 @@ import (
   "os"
   "labix.org/v2/mgo"
   "labix.org/v2/mgo/bson"
-  "fmt"
   "errors"
 )
 
@@ -20,20 +19,12 @@ func getval(a []string, d ...string) string {
   return ""
 }
 
-func ConnectDB() (*mgo.Database, chan<- bool, error) {
-  session, err := mgo.Dial("localhost")
-  if err != nil {
-    fmt.Println("Cannot Dial to mongodb")
-    return nil, nil, err
-  }
-  // TODO: Check if we can implement "TIME OUT, MOVE ON" pattern
-  c := make(chan bool)
-  go func() {
-    <-c
-    session.Close()
-  }()
-  d := session.DB("datatable")
-  return d, c, nil
+func ConnectDB() error {
+  var err error
+  DB.Session, err = mgo.Dial(Config.DBHost)
+  if err != nil { return err }
+  DB.Db = DB.Session.DB(Config.DBName)
+  return nil
 }
 
 //
@@ -41,11 +32,7 @@ func ConnectDB() (*mgo.Database, chan<- bool, error) {
 //
 
 func GetCollections() ([]string, error) {
-  session, err := mgo.Dial("localhost")
-  if err != nil { return nil,err }
-  defer session.Close()
-  db := session.DB("datatable")
-  c, err := db.CollectionNames()
+  c, err := DB.Db.CollectionNames()
   var r []string
   for _, v := range c {
     if len(v)>3 && v[0:2] == "__" && v[len(v)-2:] == "__" { continue }
@@ -60,23 +47,17 @@ func GetCollections() ([]string, error) {
 //
 
 func CreateTable(h *Hadron) error{
-  session, err := mgo.Dial("localhost")
-  if err != nil { return err }
-  defer session.Close()
   h.Id = bson.NewObjectId()
-  c := session.DB("datatable").C("__colstable__")
-  _, err = c.Upsert(bson.M{"class": h.Class}, &h)
+  c := DB.Db.C("__colstable__")
+  _, err := c.Upsert(bson.M{"class": h.Class}, &h)
   if err != nil { return err }
   return nil
 }
 
 func GetTableDesc(class string) (Hadron, error) {
-  session, err := mgo.Dial("localhost")
-  if err != nil { return Hadron{}, err }
-  defer session.Close()
-  c := session.DB("datatable").C("__colstable__")
+  c := DB.Db.C("__colstable__")
   var results []Hadron
-  err = c.Find(bson.M{"class": class}).All(&results)
+  err := c.Find(bson.M{"class": class}).All(&results)
   if err != nil { return Hadron{}, err }
   if len(results) < 1 {
     return Hadron{}, errors.New("GetTableDesc: Fetched None")
@@ -89,24 +70,18 @@ func GetTableDesc(class string) (Hadron, error) {
 //
 
 func PutQuark(q *Quark) error {
-  session, err := mgo.Dial("localhost")
-  if err != nil { return err }
-  defer session.Close()
   q.Id = bson.NewObjectId()
-  c := session.DB("datatable").C(q.Class)
-  _, err = c.Upsert(bson.M{"from":q.From, "class":q.Class}, &q)
+  c := DB.Db.C(q.Class)
+  _, err := c.Upsert(bson.M{"from":q.From, "class":q.Class}, &q)
   if err != nil { return err }
   return nil
 }
 
 func GetQuarkByHost(host, class string) (Quark, error) {
-  session, err := mgo.Dial("localhost")
-  if err != nil { return Quark{}, err }
-  defer session.Close()
-  c :=  session.DB("datatable").C(class)
+  c :=  DB.Db.C(class)
 
   var results []Quark
-  err = c.Find(bson.M{"from": host, "class":class}).All(&results)
+  err := c.Find(bson.M{"from": host, "class":class}).All(&results)
   if err != nil { return Quark{}, err }
 
   if len(results) < 1 {
@@ -116,15 +91,10 @@ func GetQuarkByHost(host, class string) (Quark, error) {
 }
 
 func GetQuarksByClass(class string) ([]Quark, error) {
-  session, err := mgo.Dial("localhost")
-  if err != nil { return nil, err }
-  defer session.Close()
-  c := session.DB("datatable").C(class)
-
+  c := DB.Db.C(class)
   var results []Quark
-  err = c.Find(bson.M{}).All(&results)
+  err := c.Find(bson.M{}).All(&results)
   if err != nil { return nil, err }
-
   return results, nil
 }
 
@@ -142,7 +112,7 @@ func parseTemplate(file string, data interface{}) ([]byte, error) {
 }
 
 func getPage(tmpl string, data interface{}) ([]byte, error) {
-  filename := "templates/" + tmpl + ".html"
+  filename := Config.TmplDir + "/" + tmpl + ".html"
   if _,err := os.Stat(filename); err != nil { return nil, err }
   return parseTemplate(filename, data)
 }

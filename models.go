@@ -1,7 +1,15 @@
 package main
 
-import "time"
-import "labix.org/v2/mgo/bson"
+import (
+  "time"
+  "labix.org/v2/mgo"
+  "labix.org/v2/mgo/bson"
+)
+
+type Database struct {
+  Session     *mgo.Session
+  Db          *mgo.Database
+}
 
 // Data from 1 Node
 type Quark struct {
@@ -21,10 +29,11 @@ type Hadron struct {
 }
 
 type Conf struct {
-  Port        int
-  DBHost      string
-  DBPort      int
-  DBData      string
+  Port        int               `json: "port"`
+  DBHost      string            `json: "db_host"`
+  DBName      string            `json: "db_name"`
+  StaticDir   string            `json: "static_dir"`
+  TmplDir     string            `json: "templates_dir"`
 }
 
 type ViewTableData struct {
