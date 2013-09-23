@@ -3,7 +3,20 @@ datatable
 
 Collect Tabular data from various endpoints and display them using datatable.js
 
-# LICENSE
+## Introduction
+
+The purpose of this tool is to collect the `current State` of applications across many servers in *tabular data format*. 
+
+### Terminology
+
+Often used when talking to the `/api` endpoint
+
++ *Class* - A view or a Table Heading. eg: apache\_domains, dns\_zones
++ *Host* - Short host name.
++ *Cols* - A list of Comma(,) separated values defining the column names for a particular class.
++ *data* - CSV data (Rows are separated by new-line character(\n), Row values by comma(,)).
+
+## LICENSE
 
 MIT
 
@@ -30,14 +43,14 @@ The following options are available for packaging the compiled application. `deb
 
 ### Creating a Class
 
-PUT /api/create
+`PUT /api/create`
 
 + class = classname
 + cols = "col1,col2,col3,col4"
 
 ### Adding Data
 
-PUT /api/put
+`PUT /api/put`
 
 + class = classname
 + host = hostname
@@ -45,13 +58,13 @@ PUT /api/put
 
 ### Get Columns for a particular Class
 
-GET /api/cols
+`GET /api/cols`
 
 + class = classname
 
 ### Get Data for a particular Host under a Class
 
-GET /api/get
+`GET /api/get`
 
 + class = classname
 + host = hostname
