@@ -14,7 +14,8 @@ func main() {
   flag.Parse()
 
   r := mux.NewRouter()
-  r.HandleFunc("/", ViewDataTable)
+  r.HandleFunc("/", ListViews)
+  r.HandleFunc("/view/{view}", ViewHandler)
 
   a := r.PathPrefix("/api").Subrouter()
   a.HandleFunc("/put", PutHandler).Methods("POST","PUT")

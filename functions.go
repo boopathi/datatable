@@ -36,6 +36,23 @@ func ConnectDB() (*mgo.Database, chan<- bool, error) {
   return d, c, nil
 }
 
+//
+// Getters - Collections
+//
+
+func GetCollections() ([]string, error) {
+  session, err := mgo.Dial("localhost")
+  if err != nil { return nil,err }
+  defer session.Close()
+  db := session.DB("datatable")
+  c, err := db.CollectionNames()
+  return c,err
+}
+
+//
+// Getters and Setters - Quarks
+//
+
 func PutQuark(q *Quark) error {
   session, err := mgo.Dial("localhost")
   if err != nil { return err }
@@ -75,6 +92,10 @@ func GetQuarksByClass(class string) ([]Quark, error) {
 
   return results, nil
 }
+
+//
+// Template Functions
+//
 
 func parseTemplate(file string, data interface{}) ([]byte, error) {
   var buf bytes.Buffer
