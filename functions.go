@@ -49,6 +49,7 @@ func GetCollections() ([]string, error) {
   var r []string
   for _, v := range c {
     if len(v)>3 && v[0:2] == "__" && v[len(v)-2:] == "__" { continue }
+    if v == "system.indexes" { continue }
     r = append(r,v)
   }
   return r,err
