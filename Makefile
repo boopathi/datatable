@@ -20,9 +20,9 @@ deb:
 		--prefix ${PREFIX} \
 		--license ${LICENSE} \
 		--provides datatable \
-		-m "${AUTHOR}" \
-		--description "${DESC}" \
-		--url "${URL}" \
+		-m ${AUTHOR} \
+		--description ${DESC} \
+		--url ${URL} \
 		./datatable ./datatable.json ./static/ ./templates/ ./README.md ./LICENSE
 	rm -f ./datatable
 
@@ -33,8 +33,8 @@ rpm:
 		--prefix ${PREFIX} \
 		--license ${LICENSE} \
 		--provides datatable \
-		-m "${AUTHOR}" \
-		--description "${DESC}" \
-		--url "${URL}" \
+		-m ${AUTHOR} \
+		--description ${DESC} \
+		--url ${URL} \
 		./datatable ./datatable.json ./static/ ./templates/ ./README.md ./LICENSE
 	rm -f ./datatable
