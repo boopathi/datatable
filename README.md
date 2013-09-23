@@ -10,16 +10,20 @@ MIT
 ## Installation
 
 + `go get github.com/boopathi/datatable`
-+ `make deb` or `make rpm`
-+ `sudo service datatable start #init script`
++ `go install`
++ `$GOPATH/bin/datatable -config datatable.json`
 
 ## Configuration
 
 Sample Configuration file: `datatable.json`. Go through the file. Pretty much self explanatory
 
-## Custom Usage
+## Distribution
 
-`$GOPATH/bin/datatable -config /path/to/datatable.json`
+The following options are available for packaging the compiled application. `deb` and `rpm` requires `fpm`.
+
++ `make tar`
++ `make rpm`
++ `make deb`
 
 ## Sending and Receiving Data
 
