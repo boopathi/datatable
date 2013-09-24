@@ -1,2 +1,3 @@
-{{range $i, $e := .}}<tr>{{range $j, $f := .}}<td>{{$f}}</td>{{end}}</tr>
-{{end}}
+<script>
+  aaData.push({{range $i,$e:=.}}{{if $i}},{{end}}[{{range $j,$f:=.}}"{{$f}}",{{end}}]{{end}});
+</script>
