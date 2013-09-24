@@ -51,7 +51,7 @@ func main() {
       case <-ticker.C:
         err = DB.Session.Ping()
         if err == nil {
-          fmt.Println("Refreshing MongoDB Session.")
+          fmt.Println(time.Now(), "Refreshing MongoDB Session.")
           DB.Session.Refresh()
         }
       case <-quit:
