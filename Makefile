@@ -1,5 +1,5 @@
 NAME=datatable
-VER=0.1.3
+VER=0.1.4
 PREFIX=/opt/datatable
 LICENSE=MIT
 AUTHOR="me@boopathi.in"
