@@ -8,6 +8,7 @@ import (
   "strconv"
   "io/ioutil"
   "encoding/json"
+  "time"
 )
 
 var Config Conf
@@ -39,6 +40,27 @@ func main() {
     return
   }
   defer DB.Session.Close()
+
+  //Refresh DB Connection every 5 minutes
+  //This is because Mongo timesout connection after 10 mins
+  ticker := time.NewTicker( 5 * time.Minute )
+  quit := make(chan struct{})
+  go func() {
+    for {
+      select {
+      case <-ticker.C:
+        err = DB.Session.Ping()
+        if err == nil {
+          fmt.Println("Refreshing MongoDB Session.")
+          DB.Session.Refresh()
+        }
+      case <-quit:
+        ticker.Stop()
+        return
+      }
+    }
+  }()
+  defer close(quit)
 
   r := mux.NewRouter()
   r.HandleFunc("/", ListViews)
