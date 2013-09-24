@@ -68,13 +68,14 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
   }
 
   //Now Throw Body
+  tmpl, err := getTemplate("dt_body")
+  if err != nil { fmt.Println(err); return }
   for i:=0;i<count;i++ {
     Body := <-body
-    page, err = getPage("dt_body", Body)
-    if err != nil { fmt.Println(err); return }
-    w.Write(page)
+    w.Write(parseTemplate(tmpl, Body))
   }
 
+  //And finally the footer
   page,err = getPage("footer", nil)
   if err != nil { fmt.Println(err); return }
   w.Write(page)

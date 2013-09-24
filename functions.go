@@ -3,7 +3,6 @@ package main
 import (
   "bytes"
   "html/template"
-  "os"
   "labix.org/v2/mgo"
   "labix.org/v2/mgo/bson"
   "errors"
@@ -102,18 +101,24 @@ func GetQuarksByClass(class string) ([]Quark, error) {
 // Template Functions
 //
 
-func parseTemplate(file string, data interface{}) ([]byte, error) {
+func getTmplName(tmpl string) string {
+  return Config.TmplDir + "/" + tmpl + ".html"
+}
+
+func getTemplate(tmpl string) (*template.Template, error) {
+  t, err := template.ParseFiles(getTmplName(tmpl))
+  return t, err
+}
+
+func parseTemplate(tmpl *template.Template, data interface{}) ([]byte) {
   var buf bytes.Buffer
-  t, err := template.ParseFiles(file)
-  if err != nil { return nil, err }
-  err = t.Execute(&buf, data)
-  if err != nil { return nil, err }
-  return buf.Bytes(), nil
+  tmpl.Execute(&buf, data)
+  return buf.Bytes()
 }
 
 func getPage(tmpl string, data interface{}) ([]byte, error) {
-  filename := Config.TmplDir + "/" + tmpl + ".html"
-  if _,err := os.Stat(filename); err != nil { return nil, err }
-  return parseTemplate(filename, data)
+  t, err := getTemplate(tmpl)
+  if err != nil { return nil, err }
+  return parseTemplate(t, data), nil
 }
 
