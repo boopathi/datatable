@@ -9,11 +9,13 @@
   <body>
     <div class="container">
       <table class="table table-striped" id="datatable">
-        <thead></thead>
+        <thead>
+          <tr>{{range .}}<th>{{.}}</th>{{end}}</tr>
+        </thead>
         <tbody></tbody>
       </table>
     </div>
     <script>
-      var aoColumns = [{{range $i,$e:=.}}"{{$e}}",{{end}}];
+      var aoColumns = [{{range .}}"{{.}}",{{end}}];
       var aaData = [];
     </script>
