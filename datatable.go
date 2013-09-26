@@ -3,12 +3,14 @@ package main
 import (
   "net/http"
   "github.com/gorilla/mux"
+  "bitbucket.org/kardianos/osext"
   "flag"
   "fmt"
   "strconv"
   "io/ioutil"
   "encoding/json"
   "time"
+  "path"
 )
 
 var Config Conf
@@ -16,7 +18,9 @@ var DB Database
 
 func main() {
   var conffile string
-  flag.StringVar(&conffile, "config", "./datatable.json", "Config File")
+  current, _ := osext.Executable()
+  current = path.Dir(current)
+  flag.StringVar(&conffile, "config", current + "/datatable.json", "Config File")
   flag.Parse()
 
   c, err := ioutil.ReadFile(conffile)
@@ -30,8 +34,8 @@ func main() {
   if Config.Port == 0 { Config.Port = 4200 }
   if Config.DBHost == "" { Config.DBHost = "localhost" }
   if Config.DBName == "" { Config.DBName = "datatable" }
-  if Config.StaticDir == "" { Config.StaticDir = "./static" }
-  if Config.TmplDir == "" { Config.TmplDir = "./templates" }
+  if Config.StaticDir == "" { Config.StaticDir = current + "/static" }
+  if Config.TmplDir == "" { Config.TmplDir = current + "/templates" }
 
   //Connect to DB
   err = ConnectDB()

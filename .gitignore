@@ -22,3 +22,8 @@ _testmain.go
 *.exe
 
 datatable.tar.gz
+datatable
+
+Capfile
+config/
+build/
