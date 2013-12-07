@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
+  "strconv"
 )
 
 func getval(a []string, d ...string) string {
@@ -20,7 +21,7 @@ func getval(a []string, d ...string) string {
 
 func ConnectDB() error {
 	var err error
-	DB.Session, err = mgo.Dial(Config.DBHost)
+	DB.Session, err = mgo.Dial(Config.DBHost+strconv.Itoa(Config.DBPort))
 	if err != nil {
 		return err
 	}

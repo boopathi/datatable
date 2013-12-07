@@ -28,4 +28,14 @@ add . /go/src/github.com/boopathi/datatable
 run go get
 run go build
 
-entrypoint ./datatable
+run echo '\
+{ \
+  "port": 4200,\
+  "db_host": $DB_PORT_27017_TCP_ADDR,\
+  "db_port": $DB_PORT_27017_TCP_PORT,\
+  "db_name": "datatable",\
+  "static_dir": "./static",\
+  "templates_dir": "./templates"\
+}' > ./datatable.json
+
+entrypoint ./datatablae

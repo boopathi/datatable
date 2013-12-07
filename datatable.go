@@ -37,6 +37,9 @@ func main() {
 	if Config.DBHost == "" {
 		Config.DBHost = "localhost"
 	}
+  if Config.DBPort == 0 {
+    Config.DBPort = 27017
+  }
 	if Config.DBName == "" {
 		Config.DBName = "datatable"
 	}
