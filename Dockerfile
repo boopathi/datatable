@@ -1,4 +1,4 @@
-docker-version  0.6.1
+docker-version  0.6.5
 from  ubuntu:12.04
 maintainer  Boopathi Rajaa <me@boopathi.in>
 
@@ -7,15 +7,9 @@ run echo 'deb http://ppa.launchpad.net/mercurial-ppa/releases/ubuntu precise mai
 run echo 'deb-src http://ppa.launchpad.net/mercurial-ppa/releases/ubuntu precise main' >> /etc/apt/sources.list.d/mercurial.list
 run apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 323293EE
 
-# Mongodb
-run apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-run echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list
-
 # Install dependencies
 run apt-get update
-run apt-get install -y curl git bzr mercurial mongodb-10gen
-
-run service mongodb start
+run apt-get install -y curl git bzr mercurial
 
 # Install Go
 run curl -s https://go.googlecode.com/files/go1.2.linux-amd64.tar.gz | tar -v -C /usr/local/ -xz
