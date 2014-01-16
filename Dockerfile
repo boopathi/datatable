@@ -1,4 +1,3 @@
-docker-version  0.6.5
 from  ubuntu:12.04
 maintainer  Boopathi Rajaa <me@boopathi.in>
 
@@ -17,25 +16,28 @@ env PATH  /usr/local/go/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/b
 env GOPATH  /go
 env GOROOT  /usr/local/go
 
-# Expose port
-expose 4200
+run go get github.com/boopathi/datatable
 
 workdir /go/src/github.com/boopathi/datatable
-
 add . /go/src/github.com/boopathi/datatable
 
 # Install application
 run go get
 run go build
 
-run echo '\
+run echo "\
 { \
-  "port": 4200,\
-  "db_host": $DB_PORT_27017_TCP_ADDR,\
-  "db_port": $DB_PORT_27017_TCP_PORT,\
-  "db_name": "datatable",\
-  "static_dir": "./static",\
-  "templates_dir": "./templates"\
-}' > ./datatable.json
+  'port': 4200,\
+  'db_host': '$DB_PORT_27017_TCP_ADDR',\
+  'db_port': $DB_PORT_27017_TCP_PORT,\
+  'db_name': 'datatable',\
+  'static_dir': './static',\
+  'templates_dir': './templates'\
+}" > ./datatable.json
 
-entrypoint ./datatablae
+run cat ./datatable.json
+
+# Expose port
+expose 4200
+
+#entrypoint ./datatable -config ./datatable.json

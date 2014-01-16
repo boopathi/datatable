@@ -38,6 +38,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte("Table Desc Id = " + h.Id.String() + "\n"))
+	Log(r)
 }
 
 //
@@ -62,6 +63,7 @@ func GetColsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte(h.Cols))
+	Log(r)
 }
 
 //
@@ -77,6 +79,7 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var key, class string = getval(r.Form["host"]), getval(r.Form["class"])
 	if key == "" || class == "" {
+		fmt.Print(key, class)
 		fmt.Println("Ignoring datapoint")
 		return
 	}
@@ -94,6 +97,7 @@ func PutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("Insert Id = " + q.Id.String() + "\n"))
+	Log(r)
 }
 
 //
@@ -118,4 +122,5 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte(q.Value))
+	Log(r)
 }

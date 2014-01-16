@@ -2,13 +2,12 @@ package main
 
 import (
 	"bitbucket.org/kardianos/osext"
-	"encoding/json"
 	"flag"
-	"fmt"
 	"github.com/gorilla/mux"
-	"io/ioutil"
+	"log"
 	"net/http"
 	"path"
+	"runtime"
 	"strconv"
 	"time"
 )
@@ -17,43 +16,26 @@ var Config Conf
 var DB Database
 
 func main() {
-	var conffile string
+	//Set runtime.GOMAXPROCS
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	current, _ := osext.Executable()
 	current = path.Dir(current)
-	flag.StringVar(&conffile, "config", current+"/datatable.json", "Config File")
+
+	flag.IntVar(&Config.Port, "port", 4200, "Server port Number")
+	flag.StringVar(&Config.DBHost, "dbhost", "localhost", "MongoDB Host")
+	flag.IntVar(&Config.DBPort, "dbport", 27017, "MongoDB Port")
+	flag.StringVar(&Config.DBUser, "dbuser", "", "MongoDB User")
+	flag.StringVar(&Config.DBPass, "dbpass", "", "MongoDB Password")
+	flag.StringVar(&Config.DBName, "dbname", "datatable", "MongoDB Database Name")
+	flag.StringVar(&Config.StaticDir, "staticdir", current+"/static", "Static Directory Path - Absolute")
+	flag.StringVar(&Config.TmplDir, "tmpldir", current+"/templates", "Template Directory Path - Absolute")
 	flag.Parse()
 
-	c, err := ioutil.ReadFile(conffile)
-	if err != nil {
-		fmt.Println("Error Reading config \n", err, "\n")
-		return
-	}
-	json.Unmarshal(c, &Config)
-
-	// Validate
-	if Config.Port == 0 {
-		Config.Port = 4200
-	}
-	if Config.DBHost == "" {
-		Config.DBHost = "localhost"
-	}
-  if Config.DBPort == 0 {
-    Config.DBPort = 27017
-  }
-	if Config.DBName == "" {
-		Config.DBName = "datatable"
-	}
-	if Config.StaticDir == "" {
-		Config.StaticDir = current + "/static"
-	}
-	if Config.TmplDir == "" {
-		Config.TmplDir = current + "/templates"
-	}
-
 	//Connect to DB
-	err = ConnectDB()
+	err := ConnectDB()
 	if err != nil {
-		fmt.Println("Error Connecting to DB")
+		log.Println("Error Connecting to DB", err)
 		return
 	}
 	defer DB.Session.Close()
@@ -68,7 +50,7 @@ func main() {
 			case <-ticker.C:
 				err = DB.Session.Ping()
 				if err == nil {
-					fmt.Println(time.Now(), "Refreshing MongoDB Session.")
+					log.Println("Refreshing MongoDB Session.")
 					DB.Session.Refresh()
 				}
 			case <-quit:
@@ -92,7 +74,7 @@ func main() {
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(Config.StaticDir + "/")))
 	err = http.ListenAndServe(":"+strconv.Itoa(Config.Port), r)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 }

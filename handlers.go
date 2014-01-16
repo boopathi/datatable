@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"labix.org/v2/mgo/bson"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -14,13 +14,14 @@ func ListViews(w http.ResponseWriter, r *http.Request) {
 
 	C, err := GetCollections()
 	if err != nil {
-		fmt.Println("Cannot Fetch Collections: ", err)
+		log.Println("Cannot Fetch Collections: ", err)
 		return
 	}
 	page, err := getPage("list", map[string]interface{}{
 		"Views": C,
 	})
 	w.Write(page)
+	Log(r)
 }
 
 func ParseQuark(q Quark, b chan<- [][]string) {
@@ -51,7 +52,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
 	//Get Header
 	h, err := GetTableDesc(class)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	Headers := strings.Split(h.Cols, ",")
@@ -59,7 +60,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
 	//Throw Page initial content first
 	page, err := getPage("header", Headers)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	w.Write(page)
@@ -78,7 +79,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
 	//Now Throw Body
 	tmpl, err := getTemplate("dt_body")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	for i := 0; i < count; i++ {
@@ -89,11 +90,11 @@ func ViewHandler(w http.ResponseWriter, r *http.Request) {
 	//And finally the footer
 	page, err = getPage("footer", nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	w.Write(page)
-
+	Log(r)
 }
 
 //
@@ -109,13 +110,13 @@ func ViewHandler_Old(w http.ResponseWriter, r *http.Request) {
 	}
 	h, err := GetTableDesc(class)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	Headers := strings.Split(h.Cols, ",")
 	qs, err := GetQuarksByClass(vars["view"])
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	var Body [][]string
@@ -133,7 +134,7 @@ func ViewHandler_Old(w http.ResponseWriter, r *http.Request) {
 		"Body":    Body,
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	w.Write(page)

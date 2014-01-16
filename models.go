@@ -31,8 +31,10 @@ type Hadron struct {
 type Conf struct {
 	Port      int    `json: "port"`
 	DBHost    string `json: "db_host"`
-  DBPort    int    `json: "db_port"`
+	DBPort    int    `json: "db_port"`
 	DBName    string `json: "db_name"`
+	DBUser    string `json: "db_user"`
+	DBPass    string `json: "db_pass"`
 	StaticDir string `json: "static_dir"`
 	TmplDir   string `json: "templates_dir"`
 }

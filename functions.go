@@ -6,7 +6,9 @@ import (
 	"html/template"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-  "strconv"
+	"log"
+	"net/http"
+	"strconv"
 )
 
 func getval(a []string, d ...string) string {
@@ -21,12 +23,24 @@ func getval(a []string, d ...string) string {
 
 func ConnectDB() error {
 	var err error
-	DB.Session, err = mgo.Dial(Config.DBHost+strconv.Itoa(Config.DBPort))
+  userpass := Config.DBUser + ":" + Config.DBPass + "@"
+  if Config.DBUser == "" || Config.DBPass == "" {
+    userpass = ""
+  }
+	conparam := "mongodb://"+userpass+Config.DBHost+":"+strconv.Itoa(Config.DBPort)+"/"+Config.DBName
+	log.Println(conparam)
+	DB.Session, err = mgo.Dial(conparam)
 	if err != nil {
 		return err
 	}
 	DB.Db = DB.Session.DB(Config.DBName)
 	return nil
+}
+
+func Log(r *http.Request) {
+	if true {
+		log.Println(r.Proto, r.Method, r.RequestURI)
+	}
 }
 
 //
