@@ -27,9 +27,24 @@ MIT
 + Install `mongodb` and configure `datatable.json`
 + `$GOPATH/bin/datatable -config /path/to/datatable.json`
 
+## Installation - Docker container
+
++ `docker pull boopathi/mongodb`
++ `docker pull boopathi/datatable`
++ `docker run -p 27017:27017 -v /var/lib/mongodb:/data/db -name mongodb boopathi/mongodb`
++ `docker run -p 4200:4200 -name datatable -link mongodb:db boopathi/datatable`
+
 ## Configuration
 
-Sample Configuration file: `datatable.json`. Go through the file. Pretty much self explanatory
+Usage of `./datatable`:
+  -dbhost="localhost": MongoDB Host
+  -dbname="datatable": MongoDB Database Name
+  -dbpass="": MongoDB Password
+  -dbport=27017: MongoDB Port
+  -dbuser="": MongoDB User
+  -port=4200: Server port Number
+  -staticdir="/go/src/github.com/boopathi/datatable/static": Static Directory Path - Absolute
+  -tmpldir="/go/src/github.com/boopathi/datatable/templates": Template Directory Path - Absolute
 
 ## Distribution
 
